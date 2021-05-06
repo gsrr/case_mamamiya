@@ -1,0 +1,22 @@
+LOAD CSV FROM 'file:///neo4j_id2.users' AS row
+WITH toInteger(row[0]) AS productId, row[1] AS productName
+MERGE (p:Product {productId: productId})
+  SET p.productName = productName
+RETURN count(p);
+
+LOAD CSV FROM 'file:///neo4j_id2.users' AS row
+WITH toInteger(row[0]) AS orderId, row[1] AS orderName
+MERGE (o:Order {orderId: orderId})
+  SET o.orderName = orderName
+RETURN count(o);
+
+:auto USING PERIODIC COMMIT 500
+LOAD CSV FROM  'file:///neo4j_relation2.users' AS row
+WITH toInteger(row[0]) AS productId, toInteger(row[1]) AS orderId, toInteger(row[2]) AS quantityOrdered
+MATCH (p:Product {productId: productId})
+MATCH (o:Order {orderId: orderId})
+MERGE (o)-[rel:CONTAINS {quantityOrdered: quantityOrdered}]->(p)
+RETURN count(rel);
+
+MATCH (o:Order)-[rel:CONTAINS]->(p:Product)
+RETURN p, rel, o LIMIT 50;
