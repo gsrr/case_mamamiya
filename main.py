@@ -97,7 +97,7 @@ def filter_users():
                 continue
             user = [u_items[2], u_items[3], datetime.timestamp(obj)]
             u_items[1] = u_items[1].replace("-", "")
-            if isalnum(u_items[1]) == False:
+            if u_items[1].isalnum() == False:
                 continue
             if u_items[1] in dic:
                 if in_the_same_time(user, dic[u_items[1]], timefilter) == False:
@@ -115,6 +115,7 @@ def filter_users():
             debug_log("%s --> %s"%(key, data))
             fw.write("%s\n"%(data))
 
+# convert name to index
 def filter_users2():
     global TXT_USERS
     timefilter = int(sys.argv[2])
@@ -300,7 +301,7 @@ def data2neo4j():
 def help():
     cmds = [
         "Convert xls to txt format : \n\tpython3 main.py xls2txt $1, $1=folder contains xls files",
-        "Filter users by some rules : \n\tpython3 main.py filter_user2 $1, $1=time threshold",
+        "Filter users by some rules : \n\tpython3 main.py filter_user $1, $1=time threshold",
         "Get relationship : \n\tpython3 main.py cal_relation2 $1 $2, $1=time threshold, $2=distance threshold" 
     ]
     print ("\n")
