@@ -215,7 +215,6 @@ def check_time_thres(u1, u2, time_thres):
         return -1
     return 0
 
-
 def check_dist_thres(u1, u2, dist_thres):
     x1 = float(u1[1])
     y1 = float(u1[2])
@@ -228,7 +227,7 @@ def check_dist_thres(u1, u2, dist_thres):
 
 def cal_relation2():
     time_thres = int(sys.argv[2])
-    dist_thres = int(sys.argv[3])
+    dist_thres = float(sys.argv[3])
     users = []
     
     i = 0
@@ -270,7 +269,6 @@ def cal_relation2():
             dic[uid1][uid2] += 1
             dic[uid2][uid1] += 1
 
-
     idmap = {}
     cnt = 1
     print ("Generate file : %s"%(NEO4J_ID_USERS))
@@ -287,22 +285,48 @@ def cal_relation2():
                 fw.write("%s,%s,%d\n"%(idmap[k1], idmap[k2], dic[k1][k2]))
 
 
-'''
-def data2neo4j():
-    i = 1
-    with open("neo")
-    for line in os.listdir("relation_folder"):
-        print (i, line)
+def filter_by_relation():
+    rcnt = int(sys.argv[2])
+    ufpath = sys.argv[3]
+    rfpath = sys.argv[4]
 
-        i += 1
-'''
+    ufw = open(ufpath, "w")
+    rfw = open(rfpath, "w")
+
+    dic = {}
+    out_users = {}
+    with open(NEO4J_ID_USERS, "r") as fr:
+        data = fr.readlines()
+        for line in data:
+            line = line.strip()
+            uid, name = line.split(",")
+            dic[uid] = name
+    
+    with open(NEO4J_RELATION_USERS, "r") as fr:
+        data = fr.readlines()
+        for line in data:
+            line = line.strip()
+            items = line.split(",")
+            if int(items[2]) < rcnt:
+                continue
+            print (line)
+            rfw.write("%s\n"%line)
+            out_users[items[0]] = 1
+            out_users[items[1]] = 1
+
+    for key in out_users:
+        ufw.write("%s,%s\n"%(key, dic[key]))
+     
+    ufw.close()
+    rfw.close()
         
 
 def help():
     cmds = [
         "Convert xls to txt format : \n\tpython3 main.py xls2txt $1, $1=folder contains xls files",
         "Filter users by some rules : \n\tpython3 main.py filter_user $1, $1=time threshold",
-        "Get relationship : \n\tpython3 main.py cal_relation2 $1 $2, $1=time threshold, $2=distance threshold" 
+        "Get relationship : \n\tpython3 main.py cal_relation2 $1 $2, $1=time threshold, $2=distance threshold", 
+        "filter by relation : \n\tpython3 main.py filter_by_relation $1, $1=relation cnt"
     ]
     print ("\n")
     for cmd in cmds:
