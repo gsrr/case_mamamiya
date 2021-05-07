@@ -1,3 +1,29 @@
+
+=== 20210507 ===
+
+[Import user]
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///user.2' AS row
+WITH toInteger(row[0]) AS productId, row[1] AS productName
+MERGE (p:Product {productId: productId})
+  SET p.productName = productName
+RETURN count(p);
+
+[Import relation]
+USING PERIODIC COMMIT 
+LOAD CSV FROM  'file:///relation.2' AS row
+WITH toInteger(row[0]) AS productId, toInteger(row[1]) AS orderId, toInteger(row[2]) AS quantityOrdered
+MATCH (p1:Product {productId: productId})
+MATCH (p2:Product {productId: orderId})
+MERGE (p2)-[rel:CONTAINS {quantityOrdered: quantityOrdered}]->(p1)
+RETURN count(rel);
+
+[Display]
+MATCH (p2:Product)-[rel:CONTAINS]->(p1:Product) RETURN count(rel);
+MATCH (p2:Product)-[rel:CONTAINS]->(p1:Product) RETURN p1, rel, p2 LIMIT 50;
+
+
+============================================================
 LOAD CSV FROM 'file:///neo4j_id2.users' AS row
 WITH toInteger(row[0]) AS productId, row[1] AS productName
 MERGE (p:Product {productId: productId})
