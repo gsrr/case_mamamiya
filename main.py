@@ -326,7 +326,7 @@ def help():
         "Convert xls to txt format : \n\tpython3 main.py xls2txt $1, $1=folder contains xls files",
         "Filter users by some rules : \n\tpython3 main.py filter_user $1, $1=time threshold",
         "Get relationship : \n\tpython3 main.py cal_relation2 $1 $2, $1=time threshold, $2=distance threshold", 
-        "filter by relation : \n\tpython3 main.py filter_by_relation $1, $1=relation cnt"
+        "filter by relation : \n\tpython3 main.py filter_by_relation $1 $2 $3, $1=relation cnt, $2=output file for users, $3=output file for relation"
     ]
     print ("\n")
     for cmd in cmds:
